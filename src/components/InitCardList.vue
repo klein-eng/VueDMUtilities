@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import InitCard from './InitCard.vue'
+import InitCard from './InitCard/InitCard.vue'
 
 export default {
 	name: 'Root',
