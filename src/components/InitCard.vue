@@ -1,16 +1,18 @@
 <template>
     <div class="init-card-root" :class="{selected: selected}">
+		
 		<div class="main-content">
 			<div class="init-counter">
-				<input v-if="editMode" :value="init" type='number' @input="$emit('update:init', this.numberOrNull($event.target.value))" placeholder="Init" class="init-counter-edit"/>
-				<div v-else @click="$emit('update:selected', !this.selected)" class="init-counter-label">{{ init }}</div>
+				<input v-if="editMode" :value="actor.init" type='number' @input="updateActorValue('init', this.numberOrNull($event.target.value))" placeholder="Init" class="init-counter-edit"/>
+				<div v-else @click="$emit('update:selected', !this.selected)" class="init-counter-label">{{ actor.init }}</div>
 			</div>
 			<div class="name">
-				<input v-if="editMode" v-model="name" placeholder="Name" class="name-edit"/>
-				<div v-else class="name-label">{{ name }}</div>
+				<input v-if="editMode" :value="actor.name" @input="updateActorValue('name', $event.target.value)" placeholder="Name" class="name-edit"/>
+				<div v-else class="name-label">{{ actor.name }}</div>
 			</div> 
-			<div v-if="maxHP && !editMode" class="hitpoints">{{curHP}} / {{maxHP}}</div>
-			<input v-else-if="editMode" v-model.number="this.maxHP" class="hp-edit" placeholder="HP" />
+			<div v-if="actor.maxHP && !editMode" class="hitpoints">{{actor.curHP}} / {{actor.maxHP}}</div>
+			<input v-else-if="editMode" :value="actor.maxHP" @input="updateActorValue('maxHP', $event.target.value)" class="hp-edit" placeholder="HP" />
+			
 			<button v-if="editMode" @click="toggleEdit" class="edit-button done">
 				<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16">
 					<path d="M13.5 2l-7.5 7.5-3.5-3.5-2.5 2.5 6 6 10-10z"></path>
@@ -41,38 +43,36 @@
 export default {
     name: 'InitCard',
     props: {
-        init: Number,
+        actor: {
+			type: Object,
+			required: true
+		},
 		selected: Boolean,
-		curHP: Number,
-		propName: String,
-		propMaxHP: Number,
 		addNext: Function,
     },
 	setup: function (props, { emit }) {
-		if (props.propMaxHP && !props.curHP) {
-			emit('update:curHP', props.propMaxHP);
+		if (props.actor.maxHP && !props.actor.curHP) {
+			emit('update:actor', {...props.actor, ["curHP"]: props.actor.maxHP});
 		}
 	},
 	data () {
 		return {
-			name: this.propName ? this.propName : null,
-			maxHP: this.propMaxHP ? this.propMaxHP : null,
-			editMode: !(this.propName && this.init),
-			addWhenSaved: !(this.propName && this.init),
+			editMode: !(this.hasData()),
+			addWhenSaved: !(this.hasData()),
 			expanded: "default"
 		}
 	},
 	methods: {
 		hasData: function () {
-			return (this.name && this.init !== null);
+			return (this.actor.name && this.actor.init !== null);
 		},
 		toggleEdit: function () {
 			if (this.editMode === false) {
 				this.editMode = true;
 			}
 			else if (this.hasData()) {
-				if (!this.curHP) {
-					this.$emit('update:curHP', this.maxHP);
+				if (this.actor.curHP === undefined) {
+					this.updateActorValue("curHP", this.actor.maxHP);
 				}
 				this.$emit('editComplete')
 				if (this.addWhenSaved) {
@@ -82,16 +82,9 @@ export default {
 				this.editMode = false;
 			}
 		},
-		getFlexOrder: function () {
-			if (!this.init) {
-				return 1;
-			}
-			return this.init * -1;
-		},
 		numberOrNull: function(eventTarget) {
 			if (eventTarget === null || isNaN(parseInt(eventTarget))) 
 			{
-				console.log("stahp")
 				return null;
 			}
 			return eventTarget;
@@ -111,9 +104,12 @@ export default {
 			else {
 				this.expanded = "default";
 			}
+		},
+		updateActorValue: function(key, value) {
+			this.$emit("update:actor", { ...this.actor, [key]: value });
 		}
 	},
-	emits: ['update:init', 'update:curHP', 'update:selected', 'editComplete']
+	emits: ['update:actor', 'update:selected', 'editComplete']
 }
 </script>
 

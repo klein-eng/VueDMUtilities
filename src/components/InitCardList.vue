@@ -6,7 +6,7 @@
         </div>
         <div>
             <InitCard v-for="p in participants" :key="p.idNumber" 
-            v-model:init.number="p.init"
+            v-model:actor="p.actor"
             v-model:selected="p.selected"
             v-model:curHP="p.curHP"
             :propName="p.name"
@@ -33,30 +33,31 @@ export default {
 		return {
 			nextID: 2,
             participants: [
-                {idNumber: 1}
+                {idNumber: 1, actor: {}}
             ],
             damageAmount: null,
 		}
 	},
     methods: {
         addEmptyParticipant: function () {
-            this.participants.push({idNumber: this.getNextID()});
+            this.participants.push({idNumber: this.getNextID(), actor: {}});
         },
         sortParticipants: function () {
             this.participants.sort((a, b) => {
-                return b.init - a.init;
+                return b.actor.init - a.actor.init;
             });
         },
         applyDamage: function () {
             this.participants.forEach(p => {
-                if (p.selected && p.curHP !== undefined) {
-                    let newHP = p.curHP - this.damageAmount;
-                    p.curHP = newHP > 0 ? newHP : 0;
+                if (p.selected && p.actor.curHP !== undefined) {
+                    let newHP = p.actor.curHP - this.damageAmount;
+                    p.actor.curHP = newHP > 0 ? newHP : 0;
                 }
             });
         },
         clearParticipants: function () {
-            this.participants = [{idNumber: this.getNextID()}];
+            this.participants = [];
+            this.addEmptyParticipant();
         },
         getNextID: function () {
             this.nextID = +this.nextID + 1;
