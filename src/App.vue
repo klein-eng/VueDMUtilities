@@ -1,26 +1,31 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <h1>Initiative Tracker</h1>
+  <Root/>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Root from './components/Root.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Root
   }
 }
 </script>
 
-<style>
+<style lang="scss">
+@import './sass/variables.scss';
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  color: $white;
+  margin-top: 30px;
+}
+body {
+  background-color: $background;
 }
 </style>
