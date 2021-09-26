@@ -63,6 +63,11 @@ export default {
 		padding-top: $card-padding;
 		padding-bottom: $card-padding;
 		margin-right: 5px;
+		height: 18px;
+	}
+	.main-content {
+		display: flex;
+		margin-bottom: 5px;
 	}
 	.init-counter {
 		flex-grow: 0;

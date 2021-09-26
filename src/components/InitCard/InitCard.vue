@@ -7,11 +7,12 @@
 			@toggle-edit="this.toggleEdit"
 			@toggleSelected="this.$emit('update:selected', !this.selected)"
 		/>
-		<div class='expanded-content' :style='{display: getExpandedContentDisplay()}'>
-			<div>
-				<div>AC: 15</div>
-			</div>
-		</div>
+		<expanded-content
+			:actor="this.actor"
+			@update-actor="updateActorValue"
+			:editMode="editMode"
+			:hidden="this.expanded !== 'expanded'"
+		/>
 		<button @click="onExpandButtonClicked" class="more-info-button">
 			<svg :class='{expanded: expanded==="expanded"}' version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="306px" height="306px" viewBox="0 0 306 306" style="enable-background:new 0 0 306 306;" xml:space="preserve">
 				<g id="expand-less">
@@ -24,11 +25,13 @@
 
 <script>
 import MainContent from './MainContent.vue'
+import ExpandedContent from './ExpandedContent.vue'
 
 export default {
     name: 'InitCard',
 	components: {
-		MainContent
+		MainContent,
+		ExpandedContent
 	},
     props: {
         actor: {
@@ -70,14 +73,6 @@ export default {
 				this.editMode = false;
 			}
 		},
-		getExpandedContentDisplay: function() {
-			if (this.expanded === "expanded") {
-				return "block";
-			}
-			else {
-				return "none";
-			}
-		},
 		onExpandButtonClicked: function() {
 			if (this.expanded === "default") {
 				this.expanded = "expanded";
@@ -109,9 +104,6 @@ export default {
 		font-size: 16px;
 		font-weight: bold;
 		margin-bottom: 5px;
-		.main-content {
-			display: flex;
-		}
 	}
 	
 	.more-info-button {
@@ -122,7 +114,6 @@ export default {
 		border: none;
 		border-bottom-left-radius: 5px;
 		border-bottom-right-radius: 5px;
-		margin-top: 5px;
 		svg {
 			height: 12px;
 			width: 12px;
