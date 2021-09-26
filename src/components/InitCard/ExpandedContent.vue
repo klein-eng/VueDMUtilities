@@ -1,7 +1,7 @@
 <template>
     <expandable :hidden="hidden">
         <div class="expanded-content" :class="{hidden: this.hidden}">
-            <input v-if="editMode" :value="actor.AC" @input="updateActorValue('AC', $event.target.value)" placeholder="AC"/>
+            <input v-if="editMode" :value="actor.AC" @input="updateActorValue('AC', $event.target.value)" placeholder="AC" class="AC-input"/>
             <div v-else-if="actor.AC !== undefined">AC: {{actor.AC}}</div>
 
             <input v-if="editMode" :value="actor.Status" @input="updateActorValue('Status', $event.target.value)" placeholder="Status"/>
@@ -62,9 +62,13 @@ export default {
             flex-grow: 1;
             width: 100%;
         }
+        .AC-input {
+            flex-grow: 0;
+            flex-basis: 60px;
+        }
     }
     .notes-field {
-        width: 100%;
+        width: 95%;
         margin-bottom: 5px;
     }
 </style>
