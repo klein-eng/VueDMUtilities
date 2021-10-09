@@ -12,6 +12,8 @@
 			@update-actor="updateActorValue"
 			:editMode="editMode"
 			:hidden="this.expanded !== 'expanded'"
+			@delete="this.$emit('delete')"
+			@duplicate="this.$emit('duplicate')"
 		/>
 		<button @click="onExpandButtonClicked" class="more-info-button">
 			<svg :class='{expanded: expanded==="expanded"}' version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="306px" height="306px" viewBox="0 0 306 306" style="enable-background:new 0 0 306 306;" xml:space="preserve">
@@ -38,8 +40,7 @@ export default {
 			type: Object,
 			required: true
 		},
-		selected: Boolean,
-		addNext: Function,
+		selected: Boolean
     },
 	setup: function (props, { emit }) {
 		if (props.actor.maxHP && !props.actor.curHP) {
@@ -68,7 +69,7 @@ export default {
 				this.$emit('editComplete')
 				if (this.addWhenSaved) {
 					this.addWhenSaved = false;
-					this.addNext();
+					this.$emit("addNext");
 				}
 				this.editMode = false;
 			}
@@ -85,7 +86,7 @@ export default {
 			this.$emit("update:actor", { ...this.actor, [key]: value });
 		}
 	},
-	emits: ['update:actor', 'update:selected', 'editComplete']
+	emits: ['update:actor', 'update:selected', 'editComplete', 'delete', 'duplicate', 'addNext']
 }
 </script>
 

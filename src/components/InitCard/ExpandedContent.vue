@@ -10,6 +10,10 @@
         <div>
             <input placeholder="Notes" class="notes-field">
         </div>
+        <div>
+            <button @click="this.$emit('duplicate')">Duplicate</button>
+            <button @click="this.$emit('delete')" class="red-button">Delete</button>
+        </div>
     </expandable>
 </template>
 
@@ -31,7 +35,7 @@ export default {
 			this.$emit("updateActor", key, value);
 		},
     },
-    emits: ["updateActor"]
+    emits: ["updateActor","delete","duplicate"]
 }
 </script>
 
@@ -49,6 +53,18 @@ export default {
 		padding-bottom: $card-padding;
 		margin-right: 5px;
 	}
+    button {
+        font-size: 18px;
+		font-weight: bold;
+        background-color: $background;
+        color: $white;
+        border: none;
+        border-radius: 5px;
+        margin: 0 5px;
+        &.red-button {
+            background-color: darkred;
+        }
+    }
     .expanded-content {
         margin-top: 5px;
         margin-bottom: 5px;
