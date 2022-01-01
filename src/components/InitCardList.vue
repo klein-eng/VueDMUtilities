@@ -1,32 +1,39 @@
 <template>
 	<div>
         <div id="button-row-top">
-            <input type="number" v-model="damageAmount" placeholder="Damage amount"/>
-            <button @click='applyDamage'>Apply</button>
+            <button @click='incrementTurn'>Next Turn</button>
+            <div class="justify-right">
+                <input type="number" v-model="damageAmount" placeholder="Damage amount"/>
+                <button @click='applyDamage'>Apply</button>
+            </div>
         </div>
         <div>
-            <InitCard v-for="a in actors" :key="a.idNumber" 
+            <InitCard v-for="(a, index) in actors" :key="a.idNumber" 
             v-model:actor="a.actor"
             v-model:selected="a.selected"
             @add-next="addEmptyActor"
             @edit-complete="sortActors"
-            @duplicate="duplicateActor(a.actor, 1)"
+            @duplicate="showDuplicateModal(a.actor)"
             @delete="deleteActor(a.idNumber)"
+            :isCurrentTurn="this.currentTurnIndex === index"
         />
         </div>
         <div>
             <button @click="deleteAllActors">Delete All</button>
         </div>
+        <duplicate-modal v-model:actor="actorToDuplicate" @duplicate="duplicateActor"/>
 	</div>
 </template>
 
 <script>
 import InitCard from './InitCard/InitCard.vue'
+import DuplicateModal from './DuplicateModal.vue'
 
 export default {
 	name: 'Root',
 	components: {
 		InitCard,
+        DuplicateModal
 	},
     data () {
 		return {
@@ -35,13 +42,19 @@ export default {
                 {idNumber: 1, actor: {init: null}}
             ],
             damageAmount: null,
+            actorToDuplicate: null,
+            currentTurnIndex: 1,
 		}
 	},
     methods: {
         addEmptyActor: function () {
             this.actors.push({idNumber: this.getNextID(), actor: {init: null}});
         },
-        duplicateActor: function (actor, howManyDups, initModifier=null) {
+        showDuplicateModal: function (actor) {
+            this.actorToDuplicate = actor;
+        },
+        duplicateActor: function (howManyDups, initModifier=null) {
+            let actor = this.actorToDuplicate
             for(let i = 0; i < howManyDups; i++) {
                 this.actors.push({ idNumber: this.getNextID(), actor: { ...actor, init: this.calcInit(actor, initModifier) } });
             }
@@ -85,6 +98,18 @@ export default {
         getNextID: function () {
             this.nextID = +this.nextID + 1;
             return this.nextID - 1;
+        },
+        incrementTurn: function () {
+            let maxIndex = 0;
+            this.actors.forEach(a => 
+            {
+                if (a.actor.init != null) {
+                    maxIndex++;
+                }
+            });
+            if(maxIndex > 0) {
+                this.currentTurnIndex = (this.currentTurnIndex + 1) % maxIndex;
+            }
         }
     }
 }
@@ -95,7 +120,9 @@ export default {
     #button-row-top {
         padding-bottom: 5px;
         display: flex;
-        justify-content: right;
+    }
+    .justify-right {
+        margin-left: auto;
     }
     input {
         background-color: $white;

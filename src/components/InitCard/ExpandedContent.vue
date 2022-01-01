@@ -1,18 +1,18 @@
 <template>
     <expandable :hidden="hidden">
         <div class="expanded-content" :class="{hidden: this.hidden}">
-            <input v-if="editMode" :value="actor.AC" @input="updateActorValue('AC', $event.target.value)" placeholder="AC" class="AC-input"/>
+            <input v-if="editMode" :value="actor.AC" @input="updateActorValue('AC', $event.target.value)" placeholder="AC" class="AC-input" :tabindex="tabIndex"/>
             <div v-else-if="actor.AC !== undefined">AC: {{actor.AC}}</div>
 
-            <input v-if="editMode" :value="actor.Status" @input="updateActorValue('Status', $event.target.value)" placeholder="Status"/>
+            <input v-if="editMode" :value="actor.Status" @input="updateActorValue('Status', $event.target.value)" placeholder="Status" :tabindex="tabIndex"/>
             <div v-else-if="actor.Status !== undefined">Status: {{actor.Status}}</div>
         </div>
         <div>
-            <input placeholder="Notes" class="notes-field">
+            <input placeholder="Notes" class="notes-field" :tabindex="tabIndex">
         </div>
-        <div>
-            <button @click="this.$emit('duplicate')">Duplicate</button>
-            <button @click="this.$emit('delete')" class="red-button">Delete</button>
+        <div class="buttonrow">
+            <button @click="this.$emit('duplicate')" class="duplicate-button" :tabindex="tabIndex">Duplicate</button>
+            <button @click="this.$emit('delete')" class="delete-button" :tabindex="tabIndex">Delete</button>
         </div>
     </expandable>
 </template>
@@ -30,6 +30,14 @@ export default {
         editMode: Boolean,
         hidden: Boolean,
     },
+    computed: {
+		tabIndex: function () {
+			if (this.hidden) {
+				return "-1";
+			}
+			return "0";
+		}
+	},
     methods: {
         updateActorValue: function(key, value) {
 			this.$emit("updateActor", key, value);
@@ -59,11 +67,16 @@ export default {
         background-color: $background;
         color: $white;
         border: none;
-        border-radius: 5px;
-        margin: 0 5px;
-        &.red-button {
+        border-radius: 4px;
+        margin: 0px 5px;
+        margin-bottom: 3px;
+        padding: 5px 10px;
+        &.delete-button {
             background-color: darkred;
         }
+    }
+    .buttonrow {
+        float: right;
     }
     .expanded-content {
         margin-top: 5px;

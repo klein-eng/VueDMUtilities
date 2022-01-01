@@ -6,7 +6,10 @@
 		</div>
 		<div class="name">
 			<input v-if="editMode" :value="actor.name" @input="updateActorValue('name', $event.target.value)" placeholder="Name" class="name-edit"/>
-			<div v-else class="name-label">{{ actor.name }}</div>
+			<div v-else class="name-label">
+				<img v-if="isCurrentTurn" src="../../assets/205-flag.svg"/>
+				{{ actor.name }}
+			</div>
 		</div> 
 		<div v-if="actor.maxHP && !editMode" class="hitpoints">{{actor.curHP}} / {{actor.maxHP}}</div>
 		<input v-else-if="editMode" :value="actor.maxHP" @input="updateActorValue('maxHP', $event.target.value)" class="hp-edit" placeholder="HP" />
@@ -32,7 +35,8 @@ export default {
 			type: Object,
 			required: true
 		},
-		editMode: Boolean
+		editMode: Boolean,
+		isCurrentTurn: Boolean
 	},
 	methods: {
 		numberOrNull: function(eventTarget) {

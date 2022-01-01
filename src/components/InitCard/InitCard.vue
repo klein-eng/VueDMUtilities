@@ -4,6 +4,7 @@
 			:actor="this.actor"
 			@update-actor="updateActorValue"
 			:editMode="this.editMode"
+			:isCurrentTurn="this.isCurrentTurn"
 			@toggle-edit="this.toggleEdit"
 			@toggleSelected="this.$emit('update:selected', !this.selected)"
 		/>
@@ -40,7 +41,8 @@ export default {
 			type: Object,
 			required: true
 		},
-		selected: Boolean
+		selected: Boolean,
+		isCurrentTurn: Boolean
     },
 	setup: function (props, { emit }) {
 		if (props.actor.maxHP && !props.actor.curHP) {
