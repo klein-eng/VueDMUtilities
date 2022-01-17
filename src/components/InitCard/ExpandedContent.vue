@@ -6,11 +6,18 @@
 
             <input v-if="editMode" :value="actor.Status" @input="updateActorValue('Status', $event.target.value)" placeholder="Status" :tabindex="tabIndex"/>
             <div v-else-if="actor.Status !== undefined">Status: {{actor.Status}}</div>
+
+            <div v-if="editMode" class="checkbox-container">
+                <label>
+                    <input type="checkbox" :value="actor.IsPC" @input="updateActorValue('IsPC', !isPC)" :tabindex="tabIndex" :checked="actor.IsPC"/>
+                    PC
+                </label>
+            </div>
         </div>
         <div>
             <input placeholder="Notes" class="notes-field" :tabindex="tabIndex">
         </div>
-        <div class="buttonrow">
+        <div v-if="!editMode" class="buttonrow">
             <button @click="this.$emit('duplicate')" class="duplicate-button" :tabindex="tabIndex">Duplicate</button>
             <button @click="this.$emit('delete')" class="delete-button" :tabindex="tabIndex">Delete</button>
         </div>
@@ -36,11 +43,14 @@ export default {
 				return "-1";
 			}
 			return "0";
-		}
+		},
+        isPC: function() {
+            return this.actor.IsPC === true;
+        }
 	},
     methods: {
         updateActorValue: function(key, value) {
-			this.$emit("updateActor", key, value);
+            this.$emit("updateActor", key, value);
 		},
     },
     emits: ["updateActor","delete","duplicate"]
@@ -94,6 +104,14 @@ export default {
         .AC-input {
             flex-grow: 0;
             flex-basis: 60px;
+        }
+        .checkbox-container {
+            flex-grow: 0;
+            max-width: auto;
+            flex-basis: 100px;
+            input {
+                width: auto;
+            }
         }
     }
     .notes-field {

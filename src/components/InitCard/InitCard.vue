@@ -1,5 +1,5 @@
 <template>
-    <div class="init-card-root" :class="{selected: selected}">
+    <div class="init-card-root" :class="{selected: selected, PC: this.actor.IsPC}">
 		<main-content
 			:actor="this.actor"
 			@update-actor="updateActorValue"
@@ -42,7 +42,8 @@ export default {
 			required: true
 		},
 		selected: Boolean,
-		isCurrentTurn: Boolean
+		isCurrentTurn: Boolean,
+		preventNewCard: Boolean
     },
 	setup: function (props, { emit }) {
 		if (props.actor.maxHP && !props.actor.curHP) {
@@ -52,13 +53,13 @@ export default {
 	data () {
 		return {
 			editMode: !(this.hasData()),
-			addWhenSaved: !(this.hasData()),
+			addWhenSaved: (!(this.hasData()) && (!this.preventNewCard === true)),
 			expanded: "default"
 		}
 	},
 	methods: {
 		hasData: function () {
-			return (this.actor.name && this.actor.init !== null);
+			return (this.actor.name != null && this.actor.init !== null);
 		},
 		toggleEdit: function () {
 			if (this.editMode === false) {
@@ -107,6 +108,9 @@ export default {
 		font-size: 16px;
 		font-weight: bold;
 		margin-bottom: 5px;
+		&.PC {
+			background-color: $PC-background;
+		}
 	}
 	
 	.more-info-button {

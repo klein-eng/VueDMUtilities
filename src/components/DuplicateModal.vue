@@ -1,26 +1,33 @@
 <template>
-    <div v-if="this.actor !== null" class="shield">
-        <div class="modal">
-            <input type="number" v-model="numDuplicates" />
+    <modal :active="this.actor !== null">
+        <div>
+            <div>Modifier: <input type="number" v-model="initMod" placeholder="Modifier"/></div>
+            <div>Duplicates: <input type="number" v-model="numDuplicates" placeholder="Duplicates"/></div>
             <button @click="duplicate">Duplicate</button>
             <button @click="cancel">Cancel</button>
         </div>
-    </div>
+    </modal>
 </template>
 
 <script>
+import Modal from './Utilities/Modal.vue'
+
 export default {
     props: {
         actor: Object
     },
+    components: {
+		Modal
+	},
     data () {
         return {
-            numDuplicates: 1
+            numDuplicates: 1,
+            initMod: null
         }
     },
     methods: {
         duplicate () {
-            this.$emit('duplicate', this.numDuplicates);
+            this.$emit('duplicate', this.numDuplicates, this.initMod);
             this.$emit('update:actor', null);
         },
         cancel () {
@@ -33,21 +40,17 @@ export default {
 
 <style lang="scss" scoped>
     @import '../sass/variables.scss';
-    .modal {
-        position: absolute;
-        background-color: $background;
-        border: 2px solid $white;
-        border-radius: 4px;
-        top: 50%;
-        width: 90%;
-        left: 5%;
+    div {
+        font-size: 16px;
+		font-weight: bold;
+        margin-top: 5px;
     }
-    .shield {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba($color: $black, $alpha: 0.75);
+    button {
+        background-color: $primary;
+        border: solid 2px $white;
+        border-radius: 5px;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 4px;
     }
 </style>

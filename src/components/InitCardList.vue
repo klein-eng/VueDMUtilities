@@ -16,10 +16,15 @@
             @duplicate="showDuplicateModal(a.actor)"
             @delete="deleteActor(a.idNumber)"
             :isCurrentTurn="this.currentTurnIndex === index"
+            :preventNewCard="a.preventNewCard"
         />
         </div>
         <div>
-            <button @click="deleteAllActors">Delete All</button>
+            <button @click="deleteAllActors" class="destructive">Delete All</button>
+        </div>
+        <div>
+            <button @click="saveActors">Save Party</button>
+            <button @click="loadActors">Load Party</button>
         </div>
         <duplicate-modal v-model:actor="actorToDuplicate" @duplicate="duplicateActor"/>
 	</div>
@@ -43,7 +48,7 @@ export default {
             ],
             damageAmount: null,
             actorToDuplicate: null,
-            currentTurnIndex: 1,
+            currentTurnIndex: 0,
 		}
 	},
     methods: {
@@ -56,15 +61,18 @@ export default {
         duplicateActor: function (howManyDups, initModifier=null) {
             let actor = this.actorToDuplicate
             for(let i = 0; i < howManyDups; i++) {
-                this.actors.push({ idNumber: this.getNextID(), actor: { ...actor, init: this.calcInit(actor, initModifier) } });
+                this.actors.push({ idNumber: this.getNextID(), actor: { ...actor, init: this.calcInit(actor, initModifier)}, preventNewCard: true });
             }
             this.sortActors();
         },
         calcInit(actor, initModifier) {
-            if (initModifier === null) {
+            console.log(initModifier);
+            if (initModifier === null || initModifier === "") {
                 return actor.init;
             }
-            return (Math.floor(Math.random() * 20) + 1) + initModifier;
+            let roll = (Math.floor(Math.random() * 20) + 1);
+            console.log("Rolled " + roll + "+" + initModifier + "=" + (roll+initModifier))
+            return roll + initModifier;
         },
         deleteActor: function (actorID) {
             let index = this.actors.findIndex(a => a.idNumber === actorID);
@@ -110,6 +118,20 @@ export default {
             if(maxIndex > 0) {
                 this.currentTurnIndex = (this.currentTurnIndex + 1) % maxIndex;
             }
+        },
+        saveActors: function () {
+            localStorage.actors = JSON.stringify(this.actors)
+        },
+        loadActors: function () {
+            if(localStorage.actors) {
+                let actors = JSON.parse(localStorage.actors)
+                actors.map(a => {
+                    a.actor.init = null;
+                    a.preventNewCard = true;
+                    });
+                actors[actors.length - 1].preventNewCard = false;
+                this.actors = actors;
+            }
         }
     }
 }
@@ -136,6 +158,12 @@ export default {
         border-radius: 5px;
         font-size: 18px;
         font-weight: bold;
+        margin: 5px;
+    }
+
+    .destructive {
+        background-color: $destructive;
+        color: $white;
     }
 </style>
 
