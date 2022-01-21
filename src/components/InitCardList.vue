@@ -123,11 +123,13 @@ export default {
             localStorage.actors = JSON.stringify(this.actors)
         },
         loadActors: function () {
+            this.deleteAllActors();
             if(localStorage.actors) {
                 let actors = JSON.parse(localStorage.actors)
                 actors.map(a => {
                     a.actor.init = null;
                     a.preventNewCard = true;
+                    a.idNumber = this.getNextID();
                     });
                 actors[actors.length - 1].preventNewCard = false;
                 this.actors = actors;
@@ -140,8 +142,10 @@ export default {
 <style lang="scss" scoped>
     @import '../sass/variables.scss';
     #button-row-top {
-        padding-bottom: 5px;
         display: flex;
+        position: sticky;
+        top: 0;
+        background-color: $background;
     }
     .justify-right {
         margin-left: auto;

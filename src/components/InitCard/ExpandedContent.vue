@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import Expandable from '../Utilities/Expandable.vue'
+import Expandable from '../Generic/Expandable.vue'
 
 export default {
     name: "ExpandedContent",

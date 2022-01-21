@@ -1,22 +1,26 @@
 <template>
 	<div>		
+		<RootHeader/>
 		<InitCardList/>
 	</div>
 </template>
 
 <script>
 import InitCardList from './InitCardList.vue'
+import RootHeader from './RootHeader.vue'
 
 export default {
 	name: 'Root',
 	components: {
-		InitCardList
+		InitCardList,
+		RootHeader
 	}
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
+@import '../sass/variables.scss';
 h3 {
   margin: 40px 0 0;
 }

@@ -1,5 +1,4 @@
 <template>
-  <h1>Initiative Tracker</h1>
   <Root/>
 </template>
 
@@ -23,7 +22,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: $white;
-  margin-top: 30px;
 }
 body {
   background-color: $background;

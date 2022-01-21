@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import Modal from './Utilities/Modal.vue'
+import Modal from './Generic/Modal.vue'
 
 export default {
     props: {
