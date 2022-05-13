@@ -7,6 +7,8 @@
 			:isCurrentTurn="this.isCurrentTurn"
 			@toggle-edit="this.toggleEdit"
 			@toggleSelected="this.$emit('update:selected', !this.selected)"
+			:isDefeated="this.actor.curHP <= 0"
+			@delete="this.$emit('delete')"
 		/>
 		<expanded-content
 			:actor="this.actor"

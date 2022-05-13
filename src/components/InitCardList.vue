@@ -1,9 +1,10 @@
 <template>
 	<div>
         <div id="button-row-top">
-            <button @click='incrementTurn'>Next Turn</button>
+            <button @click='incrementTurn' id='next-turn-button'>Next Turn</button>
             <div class="justify-right">
-                <input type="number" v-model="damageAmount" placeholder="Damage amount"/>
+                <button @click='deselectAllActors'>Deselect All</button>
+                <input type="number" v-model="damageAmount"/>
                 <button @click='applyDamage'>Apply</button>
             </div>
         </div>
@@ -53,7 +54,7 @@ export default {
 	},
     methods: {
         addEmptyActor: function () {
-            this.actors.push({idNumber: this.getNextID(), actor: {init: null}});
+            this.actors.push({idNumber: this.getNextID(), actor: {init: null}, selected: false});
         },
         showDuplicateModal: function (actor) {
             this.actorToDuplicate = actor;
@@ -99,6 +100,9 @@ export default {
                 }
             });
         },
+        deselectAllActors: function () {
+            this.actors.forEach(a => a.selected = false);
+        },
         deleteAllActors: function () {
             this.actors = [];
             this.addEmptyActor();
@@ -117,6 +121,9 @@ export default {
             });
             if(maxIndex > 0) {
                 this.currentTurnIndex = (this.currentTurnIndex + 1) % maxIndex;
+                if (this.currentTurnIndex == 0) {
+                    window.scrollTo(0, 0);
+                }
             }
         },
         saveActors: function () {
@@ -144,9 +151,14 @@ export default {
     #button-row-top {
         display: flex;
         position: sticky;
+        flex-wrap: wrap-reverse;
         top: 0;
         background-color: $background;
     }
+    #next-turn-button {
+        padding: 0 10px;
+    }
+
     .justify-right {
         margin-left: auto;
     }
@@ -155,6 +167,8 @@ export default {
         border: solid 1px $white;
         font-size: 18px;
         margin-right: 10px;
+        margin-left: 10px;
+        max-width: 50px;
     }
     button {
         background-color: $primary;

@@ -1,7 +1,7 @@
 <template>
 	<div class="main-content">
 		<div class="init-counter">
-			<input v-if="editMode" :value="actor.init" type='number' @input="updateActorValue('init', this.numberOrNull($event.target.value))" placeholder="Init" class="init-counter-edit"/>
+			<input v-if="editMode" :value="actor.init" type='number' @input="updateActorValue('init', this.numberOrNull($event.target.value))" @keyup.enter='onEnterKeyUp()' placeholder="Init" class="init-counter-edit"/>
 			<div v-else @click="$emit('toggleSelected')" class="init-counter-label">{{ actor.init }}</div>
 		</div>
 		<div class="name">
@@ -14,16 +14,18 @@
 				</svg>
 				{{ actor.name }}
 			</div>
-		</div> 
+		</div>
 		<div v-if="actor.maxHP && !editMode" class="hitpoints">{{actor.curHP}} / {{actor.maxHP}}</div>
 		<input v-else-if="editMode" :value="actor.maxHP" @input="updateActorValue('maxHP', $event.target.value)" class="hp-edit" placeholder="HP" />
 		
-		<button v-if="editMode" @click="this.$emit('toggleEdit')" class="edit-button done">
+		<button v-if="isDefeated" @click="this.$emit('delete')" class="icon-button destructive">Delete</button>
+
+		<button v-if="editMode" @click="this.$emit('toggleEdit')" class="icon-button done">
 			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16">
 				<path d="M13.5 2l-7.5 7.5-3.5-3.5-2.5 2.5 6 6 10-10z"></path>
 			</svg>
 		</button>
-		<button v-else @click="this.$emit('toggleEdit')" class="edit-button">
+		<button v-else @click="this.$emit('toggleEdit')" class="icon-button">
 			<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 16 16">
 				<path d="M14.59 9.535c-0.839-1.454-0.335-3.317 1.127-4.164l-1.572-2.723c-0.449 0.263-0.972 0.414-1.529 0.414-1.68 0-3.042-1.371-3.042-3.062h-3.145c0.004 0.522-0.126 1.051-0.406 1.535-0.839 1.454-2.706 1.948-4.17 1.106l-1.572 2.723c0.453 0.257 0.845 0.634 1.123 1.117 0.838 1.452 0.336 3.311-1.12 4.16l1.572 2.723c0.448-0.261 0.967-0.41 1.522-0.41 1.675 0 3.033 1.362 3.042 3.046h3.145c-0.001-0.517 0.129-1.040 0.406-1.519 0.838-1.452 2.7-1.947 4.163-1.11l1.572-2.723c-0.45-0.257-0.839-0.633-1.116-1.113zM8 11.24c-1.789 0-3.24-1.45-3.24-3.24s1.45-3.24 3.24-3.24c1.789 0 3.24 1.45 3.24 3.24s-1.45 3.24-3.24 3.24z"></path>
 			</svg>
@@ -40,7 +42,8 @@ export default {
 			required: true
 		},
 		editMode: Boolean,
-		isCurrentTurn: Boolean
+		isCurrentTurn: Boolean,
+		isDefeated: Boolean
 	},
 	methods: {
 		numberOrNull: function(eventTarget) {
@@ -52,9 +55,23 @@ export default {
 		},
 		updateActorValue: function(key, value) {
 			this.$emit("updateActor", key, value);
+		},
+		onEnterKeyUp: function() {
+			if (!this.editMode) {
+				return;
+			}
+			this.nextEmptyRequiredField();
+		},
+		nextEmptyRequiredField: function() {
+			if (this.actor.init === null) {
+				return;
+			}
+			else if (this.actor.name === null) {
+				return;
+			}
 		}
 	},
-	emits: ['updateActor', 'toggleEdit', 'toggleSelected', 'update:selected', 'editComplete']
+	emits: ['updateActor', 'toggleEdit', 'toggleSelected', 'update:selected', 'editComplete', 'delete']
 }
 </script>
 
@@ -114,7 +131,7 @@ export default {
 		flex-grow: 0;
 		max-width: 40px;
 	}
-	.edit-button {
+	.icon-button {
 		flex-grow: 0;
 		background-color: $background;
 		color: $white;
@@ -129,6 +146,9 @@ export default {
 		}
 		&.done {
 			background-color: $black;
+		}
+		&.destructive {
+			background-color: darkred;
 		}
 		svg {
 			height: 20px;
